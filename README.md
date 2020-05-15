@@ -90,7 +90,7 @@ The code can be compiled using g++ 8.0 or newer.
 `g++ -o rosalind_prot  main.cpp -lstdc++fs`
 
 ### Help
-`      Options: 
+      ` Options: 
       -h | --help           Print this help 
       -i | --input          Input file (default in.txt) 
       -o | --output         Output file (default out.txt) 
