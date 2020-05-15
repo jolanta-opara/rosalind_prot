@@ -57,7 +57,8 @@ In the example, there is only one gene coded, but in the real sequences, multipl
 Both (1) and (2) are implemented and (2) is the default behaviour. The behaviour can be changed using '--usestop' parameter.
 
 #### RNA reading frames
-A reading frame is defined by the initial triplet of nucleotides from which translation starts. It sets the frame for a run of successive, non-overlapping codons, which is known as an "open reading frame" (ORF). For example, the string 5'-AAATGAACG-3' (see https://en.wikipedia.org/wiki/Genetic_code#/media/File:Homo_sapiens-mtDNA~NC_012920-ATP8+ATP6_Overlap.svg), if read from the first position, contains the codons AAA, TGA, and ACG; if read from the second position, it contains the codons AAT and GAA; and if read from the third position, it contains the codons ATG and AAC. Every sequence can, thus, be read in its 5' → 3' direction in three reading frames, each producing a possibly distinct amino acid sequence. Source: https://en.wikipedia.org/wiki/Genetic_code
+>A reading frame is defined by the initial triplet of nucleotides from which translation starts. It sets the frame for a run of successive, non-overlapping codons, which is known as an "open reading frame" (ORF). For example, the string 5'-AAATGAACG-3' (see https://en.wikipedia.org/wiki/Genetic_code#/media/File:Homo_sapiens-mtDNA~NC_012920-ATP8+ATP6_Overlap.svg), if read from the first position, contains the codons AAA, TGA, and ACG; if read from the second position, it contains the codons AAT and GAA; and if read from the third position, it contains the codons ATG and AAC. Every sequence can, thus, be read in its 5' → 3' direction in three reading frames, each producing a possibly distinct amino acid sequence. 
+Source: https://en.wikipedia.org/wiki/Genetic_code
 ##### Possible solutions
 1. Use only one frame
   - pros: It's simple
@@ -79,11 +80,15 @@ If it happens anyway, the program immediately returns an error code and displays
 ## Algorithm
 
 ### Description
-The implemented solution reads the input file codon after codon and wites the decoded protein symbol immediately to the output file.
+The implemented solution reads the input file codon after codon and writes the decoded protein symbol immediately to the output file.
 ### Time complexity
-The approach has to read all the data, so it has O(N) complexity, where N is the input data length.
+The approach has to read all the data, so it has O(N) complexity, where N is the input data length. The dominant operation is reading the input. The translation is conducted in constant O(1) time using a hash table.
 ### Space complexity
-The approach has constant space complexity because only one codon is the buffer.
+The program has constant space complexity because only one codon is the buffer.
+### Discussion
+In case of inputs far longer than required in the task, the approach can be modified to a multithreaded version. The following cases can be easly decoded in separate threads:
+- multiple reading frames
+- chunks of the input data
 
 ## Compilation
 The code can be compiled using g++ 8.0 or newer.
@@ -116,3 +121,35 @@ The code can be compiled using g++ 8.0 or newer.
       
 ### Test cases
 Folder "tests" contains example inputs and outputs of the program.
+
+#### Example in the task description
+##### Input: example.in
+AUGGCCAUGGCGCCCAGAACUGAGAUCAAUAGUACCCGUAUUAACGGGUGA
+#### Output: example.out
+MAMAPRTEINSTRING
+
+#### All possible codons in one file
+##### Input: all.in
+AUGUUUUUCUUAUUGUCUUCCUCAUCGUAUUACUGUUGCUGGCUUCUCCUACUGCCUCCCCCACCGCAUCACCAACAGCGUCGCCGACGGAUUAUCAUAAUGACUACCACAACGAAUAACAAAAAGAGUAGCAGAAGGGUUGUCGUAGUGGCUGCCGCAGCGGAUGACGAAGAGGGUGGCGGAGGGUAAUAGUGA
+#### Output: all.out
+MFFLLSSSSYYCCWLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG
+
+
+#### Codons before the start codons
+##### Input: before_start.in
+AAAAUGGCCAUGGCGCCCAGAACUGAGAUCAAUAGUACCCGUAUUAACGGGUGA
+#### Output with default (1) waitforstart flag: ignore_before_start.out
+MAMAPRTEINSTRING
+#### Output with (0) waitforstart flag: ignore_before_start.out
+KMAMAPRTEINSTRING
+
+#### Multiple genes in one file
+##### Input: multiple.in
+AUGUUUUUCUUAUUGUCUUCCUCAUCGUAUUACUGUUGCUGGCUUCUCCUACUGCCUCCCCCACCGCAUCACCAACAGCGUCGCCGACGGAUUAUCAUAAUGACUACCACAACGAAUAACAAAAAGAGUAGCAGAAGGGUUGUCGUAGUGGCUGCCGCAGCGGAUGACGAAGAGGGUGGCGGAGGGUAAUAGUGAAUGUUUUUCUUAUUGUCUUCCUCAUCGUAUUACUGUUGCUGGCUUCUCCUACUGCCUCCCCCACCGCAUCACCAACAGCGUCGCCGACGGAUUAUCAUAAUGACUACCACAACGAAUAACAAAAAGAGUAGCAGAAGGGUUGUCGUAGUGGCUGCCGCAGCGGAUGACGAAGAGGGUGGCGGAGGGUAAUAGUGAAUGUUUUUCUUAUUGUCUUCCUCAUCGUAUUACUGUUGCUGGCUUCUCCUACUGCCUCCCCCACCGCAUCACCAACAGCGUCGCCGACGGAUUAUCAUAAUGACUACCACAACGAAUAACAAAAAGAGUAGCAGAAGGGUUGUCGUAGUGGCUGCCGCAGCGGAUGACGAAGAGGGUGGCGGAGGGUAAUAGUGAAUGUUUUUCUUAUUGUCUUCCUCAUCGUAUUACUGUUGCUGGCUUCUCCUACUGCCUCCCCCACCGCAUCACCAACAGCGUCGCCGACGGAUUAUCAUAAUGACUACCACAACGAAUAACAAAAAGAGUAGCAGAAGGGUUGUCGUAGUGGCUGCCGCAGCGGAUGACGAAGAGGGUGGCGGAGGGUAAUAGUGA
+#### Output multiple.out
+MFFLLSSSSYYCCWLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGGMFFLLSSSSYYCCWLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGGMFFLLSSSSYYCCWLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGGMFFLLSSSSYYCCWLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG
+
+#### Long (over 1000 kbp) data
+##### Input: long.in
+##### Output: long.out
+
